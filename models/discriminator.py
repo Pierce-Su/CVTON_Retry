@@ -195,6 +195,7 @@ class HumanParsingDiscriminator(nn.Module):
         else:
             raise NotImplementedError
         # 45 = 3+16+26
+        '''
         if opt.img_size[0] == 64:
             self.channels = [45, 128, 128, 256, 512]
         elif opt.img_size[0] == 256:
@@ -205,13 +206,13 @@ class HumanParsingDiscriminator(nn.Module):
             self.channels = [45, 128, 128, 256, 256, 256, 512, 512, 512]
         else:
             raise NotImplementedError
-
+        '''
         parsing_down = []
         C_t_mask_down = []
         densepose_down = []
-        parsing_down_all = []
+        #parsing_down_all = []
         for i in range(opt.num_res_blocks):
-            parsing_down_all.append(residual_block_D(self.channels[i], self.channels[i + 1], opt, -1, first=(i == 0)))
+            #parsing_down_all.append(residual_block_D(self.channels[i], self.channels[i + 1], opt, -1, first=(i == 0)))
 
             parsing_down.append(
                 residual_block_D(self.channels_parsing[i], self.channels_parsing[i + 1], opt, -1, first=(i == 0)))
@@ -224,7 +225,7 @@ class HumanParsingDiscriminator(nn.Module):
         self.C_t_mask_down = nn.Sequential(*C_t_mask_down)
         self.densepose_down = nn.Sequential(*densepose_down)
 
-        self.parsing_down_all = nn.Sequential(*parsing_down_all)
+        #self.parsing_down_all = nn.Sequential(*parsing_down_all)
         norm_layer = norms.get_spectral_norm(opt)
 
         self.parsing_end = nn.Sequential(
@@ -239,11 +240,12 @@ class HumanParsingDiscriminator(nn.Module):
             nn.LeakyReLU(0.2, False),
             norm_layer(nn.Conv2d(512, 64, kernel_size=1))
         )
-
+        '''
         self.parsing_all_end = nn.Sequential(
             nn.LeakyReLU(0.2, False),
             norm_layer(nn.Conv2d(512, 64, kernel_size=1))
         )
+        '''
         self.linear = nn.Sequential(
             nn.LeakyReLU(0.2, False),
             nn.Flatten(),
