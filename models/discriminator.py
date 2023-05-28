@@ -161,7 +161,7 @@ class HumanParsingDiscriminator(nn.Module):
     def __init__(self, opt):
         super(HumanParsingDiscriminator, self).__init__()
         self.opt = opt
-        """
+
         if opt.img_size[0] == 64:
             self.channels_mask = [3, 128, 128, 256, 512]
         elif opt.img_size[0] == 256:
@@ -193,7 +193,7 @@ class HumanParsingDiscriminator(nn.Module):
         elif self.opt.img_size[0] == 1024:
             self.channels_densepose = [26, 128, 128, 256, 256, 256, 512, 512, 512]
         else:
-            raise NotImplementedError        """
+            raise NotImplementedError
         # 45 = 3+16+26
         if opt.img_size[0] == 64:
             self.channels = [45, 128, 128, 256, 512]
