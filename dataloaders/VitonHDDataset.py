@@ -242,9 +242,22 @@ class VitonHDDataset(Dataset):
         target_cloth_mask = cv2.imread(os.path.join(self.db_path, self.db_f, "cloth-mask", df_row["target"]))
         target_cloth_mask = cv2.cvtColor(target_cloth_mask, cv2.COLOR_BGR2RGB)
 
+        binary_target_mask = np.zeros(target_cloth_mask.shape)
+        binary_target_mask[np.all(target_cloth_mask==[255, 255, 255], axis=-1)] = [1, 1, 1]
+
+        target_cloth = (target_cloth * binary_target_mask).astype(np.uint8)
+        #cv2.imshow("mask target", target_cloth)
+
         # extract non-warped original cloth mask
         cloth_mask = cv2.imread(os.path.join(self.db_path, self.db_f, "cloth-mask", df_row["poseA"]))
         cloth_mask = cv2.cvtColor(cloth_mask, cv2.COLOR_BGR2RGB)
+
+        binary_cloth_mask = np.zeros(cloth_mask.shape)
+        binary_cloth_mask[np.all(cloth_mask == [255, 255, 255], axis=-1)] = [1, 1, 1]
+
+        cloth_image = (cloth_image * binary_cloth_mask).astype(np.uint8)
+        #cv2.imshow("mask cloth", cloth_image)
+        #cv2.waitKey(5)
 
         # load cloth labels
         cloth_seg = cv2.imread(
@@ -258,9 +271,12 @@ class VitonHDDataset(Dataset):
         # additionally, get cloth segmentations by cloth part
         cloth_seg_transf = np.zeros(self.opt.img_size)
         mask = np.zeros(self.opt.img_size)
+        mask_top = np.zeros(self.opt.img_size)
 
         for i, color in enumerate(vitonHD_parse_labels):
             cloth_seg_transf[np.all(cloth_seg == color, axis=-1)] = i
+            if i < 3:
+                mask_top[np.all(cloth_seg == color, axis=-1)] = 1.0
             if i < (
                     6 + self.opt.no_bg):  # this works, because colors are sorted in a specific way with background being the 8th. # or i == 7 or i == 9
                 mask[np.all(cloth_seg == color, axis=-1)] = 1.0
@@ -270,6 +286,8 @@ class VitonHDDataset(Dataset):
 
         mask = np.repeat(np.expand_dims(mask, -1), 3, axis=-1).astype(np.uint8)
         masked_image = image * (1 - mask)
+
+        mask_top = np.repeat(np.expand_dims(mask_top, -1), 3, axis=-1).astype(np.uint8)
 
         """
         bgr_mask_image = cv2.cvtColor(masked_image, cv2.COLOR_RGB2BGR)
@@ -320,7 +338,7 @@ class VitonHDDataset(Dataset):
                                    interpolation=cv2.INTER_NEAREST)  # INTER_LINEAR
 
         densepose_seg_target = cv2.imread(
-            os.path.join(self.db_path, self.db_f, "image-densepose", df_row["target"]).replace(".jpg", ".png"))
+            os.path.join(self.db_path, self.db_f, "image-densepose", df_row["target"].replace(".jpg", ".png")))
         densepose_seg_target = cv2.cvtColor(densepose_seg_target, cv2.COLOR_BGR2RGB)
         densepose_seg_target = cv2.resize(densepose_seg_target, self.opt.img_size[::-1],
                                    interpolation=cv2.INTER_NEAREST)  # INTER_LINEAR
@@ -360,6 +378,8 @@ class VitonHDDataset(Dataset):
                     if abs(pixel[0] - color[0]) < 10 and abs(pixel[1] - color[1]) < 10 and abs(
                             pixel[2] - color[2]) < 10:
                         densepose_seg_transf_target[j][k] = i"""
+
+
         densepose_seg_transf_target = np.expand_dims(densepose_seg_transf_target, 0)
         densepose_seg_transf_target = torch.tensor(densepose_seg_transf_target)
         # scale the inputs to range [-1, 1]
@@ -464,6 +484,7 @@ class VitonHDDataset(Dataset):
         human_parse_transf = np.expand_dims(human_parse_transf, 0)
         human_parse_transf = torch.tensor(human_parse_transf)
         """
+
 
         return {"image": {"I": image,
                           "C_t": cloth_image,
