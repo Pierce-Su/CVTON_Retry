@@ -145,7 +145,7 @@ class OASIS_model(nn.Module):
 
                 if self.opt.add_cd_loss:
                     # output_CD = self.netCD(fake, image["C_t_swap"])
-                    output_CD = self.netCD(fake, image["C_t"])
+                    output_CD = self.netCD(fake_target[:, 0:3, :, :], image["target_cloth"])
                     loss_G_adv_CD = losses_computer.loss_adv(output_CD, for_real=True)
                     loss_G += loss_G_adv_CD
                 else:
@@ -159,14 +159,14 @@ class OASIS_model(nn.Module):
                     loss_G_adv_HD = None
 
                 if self.opt.add_pd_loss:
-                    fake = generate_patches(self.opt, fake, label_centroids)
+                    fakePD = generate_patches(self.opt, fake_target[:, :3, :, :], label_centroids)
 
                     # for i, fake_sample in enumerate(fake):
                     #     # DELET AFTER
                     #     _fake = ((fake_sample * 0.5 + 0.5).detach().permute(1, 2, 0).cpu().numpy() * 255).astype(np.uint8)
                     #     Image.fromarray(_fake).save(os.path.join("sample", "patch_%d.png" % i))    
 
-                    output_PD = self.netPD(fake)
+                    output_PD = self.netPD(fakePD)
                     loss_G_adv_PD = losses_computer.loss_adv(output_PD, for_real=True)
                     loss_G += loss_G_adv_PD
                 else:
@@ -210,8 +210,11 @@ class OASIS_model(nn.Module):
                     loss_G_lpips = None
                     loss_G_lpips_parsing = None
                 if self.opt.add_l2_loss:
+                    """
                     loss_G_l2 = self.L2_loss(full_fake[:, 3:, :, :], human_parsing)
                     loss_G += loss_G_l2
+                    """
+                    loss_G_l2 = None
                 else:
                     loss_G_l2 = None
 
@@ -399,6 +402,7 @@ class OASIS_model(nn.Module):
                 loss_HD_real = losses_computer.loss_adv(output_HD_real, for_real=True)
                 loss_HD += loss_HD_real
                 return loss_HD, [loss_HD_fake, loss_HD_real]
+
             elif mode == "generate":
                 with torch.no_grad():
                     if self.opt.no_EMA:

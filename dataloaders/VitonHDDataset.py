@@ -189,7 +189,7 @@ class VitonHDDataset(Dataset):
         self.filepath_df = pd.read_csv(os.path.join(self.db_path, test_pairs), sep=" ", names=["poseA", "target"])
         # self.filepath_df.target = self.filepath_df.target.str.replace("_0", "_1")
         if phase == "test_same":
-            print(self.filepath_df)
+            #print(self.filepath_df)
             self.filepath_df.target = self.filepath_df.poseA.str
 
         if phase == "train":
@@ -205,17 +205,26 @@ class VitonHDDataset(Dataset):
             transforms.ToTensor(),
         ])
 
+
         if phase in {"train", "train_whole"} and self.opt.add_pd_loss:
             self.hand_indices = [3, 4, 5]
             self.body_label_centroids = [None] * len(self.filepath_df)
         else:
             self.body_label_centroids = None
 
+    def tensor_to_image(t):
+        tensor = t * 255
+        tensor = np.array(tensor, dtype=np.uint8)
+        if np.ndim(tensor) > 3:
+            assert tensor.shape[0] == 1
+            tensor = tensor[0]
+        return Image.fromarray(tensor)
+
     def __getitem__(self, index):
         df_row = self.filepath_df.iloc[index]
         # get original image of person
         image = cv2.imread(os.path.join(self.db_path, self.db_f, "image", df_row["poseA"]))
-        print(os.path.join(self.db_path, "train", "image", df_row["poseA"]))
+        #print(os.path.join(self.db_path, "train", "image", df_row["poseA"]))
 
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         image = cv2.resize(image, self.opt.img_size[::-1], interpolation=cv2.INTER_AREA)
@@ -249,6 +258,7 @@ class VitonHDDataset(Dataset):
         # additionally, get cloth segmentations by cloth part
         cloth_seg_transf = np.zeros(self.opt.img_size)
         mask = np.zeros(self.opt.img_size)
+
         for i, color in enumerate(vitonHD_parse_labels):
             cloth_seg_transf[np.all(cloth_seg == color, axis=-1)] = i
             if i < (
@@ -304,13 +314,13 @@ class VitonHDDataset(Dataset):
         body_seg_transf = torch.tensor(body_seg_transf)
 
         densepose_seg = cv2.imread(
-            os.path.join(self.db_path, self.db_f, "image-densepose", df_row["poseA"]))
+            os.path.join(self.db_path, self.db_f, "image-densepose", df_row["poseA"].replace(".jpg", ".png")))
         densepose_seg = cv2.cvtColor(densepose_seg, cv2.COLOR_BGR2RGB)
         densepose_seg = cv2.resize(densepose_seg, self.opt.img_size[::-1],
                                    interpolation=cv2.INTER_NEAREST)  # INTER_LINEAR
 
         densepose_seg_target = cv2.imread(
-            os.path.join(self.db_path, self.db_f, "image-densepose", df_row["target"]))
+            os.path.join(self.db_path, self.db_f, "image-densepose", df_row["target"]).replace(".jpg", ".png"))
         densepose_seg_target = cv2.cvtColor(densepose_seg_target, cv2.COLOR_BGR2RGB)
         densepose_seg_target = cv2.resize(densepose_seg_target, self.opt.img_size[::-1],
                                    interpolation=cv2.INTER_NEAREST)  # INTER_LINEAR
