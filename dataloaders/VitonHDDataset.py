@@ -245,7 +245,7 @@ class VitonHDDataset(Dataset):
         binary_target_mask = np.zeros(target_cloth_mask.shape)
         binary_target_mask[np.all(target_cloth_mask==[255, 255, 255], axis=-1)] = [1, 1, 1]
 
-        target_cloth = (target_cloth * binary_target_mask).astype(np.uint8)
+        #target_cloth = (target_cloth * binary_target_mask).astype(np.uint8)
         #cv2.imshow("mask target", target_cloth)
 
         # extract non-warped original cloth mask
@@ -255,7 +255,7 @@ class VitonHDDataset(Dataset):
         binary_cloth_mask = np.zeros(cloth_mask.shape)
         binary_cloth_mask[np.all(cloth_mask == [255, 255, 255], axis=-1)] = [1, 1, 1]
 
-        cloth_image = (cloth_image * binary_cloth_mask).astype(np.uint8)
+        #cloth_image = (cloth_image * binary_cloth_mask).astype(np.uint8)
         #cv2.imshow("mask cloth", cloth_image)
         #cv2.waitKey(5)
 

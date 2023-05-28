@@ -205,28 +205,28 @@ class HumanParsingDiscriminator(nn.Module):
             self.channels = [45, 128, 128, 256, 256, 256, 512, 512, 512]
         else:
             raise NotImplementedError
-        """
+
         parsing_down = []
         C_t_mask_down = []
-        densepose_down = []"""
+        densepose_down = []
         parsing_down_all = []
         for i in range(opt.num_res_blocks):
             parsing_down_all.append(residual_block_D(self.channels[i], self.channels[i + 1], opt, -1, first=(i == 0)))
-            """
+
             parsing_down.append(
                 residual_block_D(self.channels_parsing[i], self.channels_parsing[i + 1], opt, -1, first=(i == 0)))
             C_t_mask_down.append(
                 residual_block_D(self.channels_mask[i], self.channels_mask[i + 1], opt, -1, first=(i == 0)))
             densepose_down.append(
-                residual_block_D(self.channels_densepose[i], self.channels_densepose[i + 1], opt, -1, first=(i == 0)))"""
-        """
+                residual_block_D(self.channels_densepose[i], self.channels_densepose[i + 1], opt, -1, first=(i == 0)))
+
         self.parsing_down = nn.Sequential(*parsing_down)
         self.C_t_mask_down = nn.Sequential(*C_t_mask_down)
         self.densepose_down = nn.Sequential(*densepose_down)
-        """
+
         self.parsing_down_all = nn.Sequential(*parsing_down_all)
         norm_layer = norms.get_spectral_norm(opt)
-        """
+
         self.parsing_end = nn.Sequential(
             nn.LeakyReLU(0.2, False),
             norm_layer(nn.Conv2d(512, 64, kernel_size=1))
@@ -239,7 +239,7 @@ class HumanParsingDiscriminator(nn.Module):
             nn.LeakyReLU(0.2, False),
             norm_layer(nn.Conv2d(512, 64, kernel_size=1))
         )
-        """
+
         self.parsing_all_end = nn.Sequential(
             nn.LeakyReLU(0.2, False),
             norm_layer(nn.Conv2d(512, 64, kernel_size=1))
@@ -248,19 +248,25 @@ class HumanParsingDiscriminator(nn.Module):
             nn.LeakyReLU(0.2, False),
             nn.Flatten(),
             # norm_layer(nn.Linear(2 * 64 * 4 * (2 + (opt.dataset == "viton")), out_features=1))
-            norm_layer(nn.Linear(64 * 4 * 3, out_features=1))
+            norm_layer(nn.Linear(2 * 64 * 4 * 3, out_features=1))
+        )
+        self.final_linear = nn.Sequential(
+            # nn.LeakyReLU(0.2, False),
+            nn.Flatten(),
+            norm_layer(nn.Linear(2, 1))
         )
 
     def forward(self, parsing, C_t_mask, densepose):
-        parsing_all_enc = self.parsing_all_end(self.parsing_down_all(torch.cat((parsing, C_t_mask, densepose), dim=1)))
-        """
+        #parsing_all_enc = self.parsing_all_end(self.parsing_down_all(torch.cat((parsing, C_t_mask, densepose), dim=1)))
+
         parsing_enc = self.parsing_end(self.parsingdown(parsing))
         C_t_mask_enc = self.C_t_mask_end(self.C_t_mask_down(C_t_mask))
         densepose_enc = self.densepose_end(self.densepose_down(densepose))
-        """
-        x = self.linear(parsing_all_enc)
-        return x
 
+        x = self.linear(torch.cat((parsing_enc, C_t_mask_enc), dim=1))
+        y = self.linear(torch.cat((parsing_enc, densepose_enc), dim=1))
+        out = self.final_linear(torch.cat((x, y), dim=1))
+        return out
 
 class residual_block_D(nn.Module):
     def __init__(self, fin, fout, opt, up_or_down, first=False):
