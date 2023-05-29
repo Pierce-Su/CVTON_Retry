@@ -402,22 +402,22 @@ class OASIS_model(nn.Module):
                 loss_HD_real = losses_computer.loss_adv(output_HD_real, for_real=True)
                 loss_HD += loss_HD_real
                 return loss_HD, [loss_HD_fake, loss_HD_real]
-
             elif mode == "generate":
                 with torch.no_grad():
                     if self.opt.no_EMA:
-                        fake, C_transform = self.netG(image["I_m"], image["C_t"], image["cloth_mask"],
+                        full_fake, C_transform = self.netG(image["I_m"], image["C_t"], image["cloth_mask"],
                                                       label["body_seg"], label["cloth_seg"], label["densepose_seg"],
                                                       agnostic=agnostic, human_parsing=human_parsing)
-                        full_fake = fake
-                        fake = fake[:, 0:3, :, :]
+
+                        fake = full_fake[:, 0:3, :, :]
+                        fake_parsing = full_fake[:, 3:, :, :]
                     else:
-                        fake, C_transform = self.netEMA(image["I_m"], image["C_t"], image["cloth_mask"],
+                        full_fake, C_transform = self.netEMA(image["I_m"], image["C_t"], image["cloth_mask"],
                                                         label["body_seg"], label["cloth_seg"], label["densepose_seg"],
                                                         agnostic=agnostic, human_parsing=human_parsing)
-                        full_fake = fake
-                        fake = fake[:, 0:3, :, :]
-                return fake
+                        fake = full_fake[:, 0:3, :, :]
+                        fake_parsing = full_fake[:, 3:, :, :]
+                return fake, fake_parsing
 
             else:
                 raise NotImplementedError
