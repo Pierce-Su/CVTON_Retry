@@ -405,19 +405,19 @@ class OASIS_model(nn.Module):
             elif mode == "generate":
                 with torch.no_grad():
                     if self.opt.no_EMA:
-                        full_fake, C_transform = self.netG(image["I_m"], image["C_t"], image["cloth_mask"],
+                        full_fake, C_transform = self.netG(image["I_m"], image["target_cloth"], image["target_cloth_mask"],
                                                       label["body_seg"], label["cloth_seg"], label["densepose_seg"],
                                                       agnostic=agnostic, human_parsing=human_parsing)
 
                         fake = full_fake[:, 0:3, :, :]
                         fake_parsing = full_fake[:, 3:, :, :]
                     else:
-                        full_fake, C_transform = self.netEMA(image["I_m"], image["C_t"], image["cloth_mask"],
+                        full_fake, C_transform = self.netEMA(image["I_m"], image["target_cloth"], image["target_cloth_mask"],
                                                         label["body_seg"], label["cloth_seg"], label["densepose_seg"],
                                                         agnostic=agnostic, human_parsing=human_parsing)
                         fake = full_fake[:, 0:3, :, :]
                         fake_parsing = full_fake[:, 3:, :, :]
-                return fake, fake_parsing
+                return fake, fake_parsing, C_transform
 
             else:
                 raise NotImplementedError

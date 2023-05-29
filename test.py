@@ -167,7 +167,7 @@ if opt.phase == "test":
         if opt.no_seg:
             image["I_m"] = image["I"]
         
-        pred, parsing = model(image, label, "generate", None, agnostic=agnostic).detach().cpu().squeeze().permute(1, 2, 0).numpy()
+        pred, parsing, C_transform = model(image, label, "generate", None, agnostic=agnostic).detach().cpu().squeeze().permute(1, 2, 0).numpy()
         #print(pred.shape)
         pred = (pred + 1) / 2
         
@@ -196,6 +196,9 @@ if opt.phase == "test":
 
         parsing_image = tens_to_lab(parsing, 17)
         cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename[:-4] + "_parsing.png"), parsing_image)
+
+        cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename[:-4] + "_C_transform.png"),
+                    C_transform)
     print()
 
 
