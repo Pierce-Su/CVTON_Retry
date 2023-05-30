@@ -440,8 +440,13 @@ class OASIS_model(nn.Module):
             if self.opt.add_cd_loss:
                 self.netCD.load_state_dict(torch.load(path + "CD.pth"))
 
+            if self.opt.add_hd_loss:
+                self.netHD.load_state_dict(torch.load(path + "HD.pth"))
+
             if self.opt.add_pd_loss:
                 self.netPD.load_state_dict(torch.load(path + "PD.pth"))
+
+
 
             if not self.opt.no_EMA:
                 self.netEMA.load_state_dict(torch.load(path + "EMA.pth"))
