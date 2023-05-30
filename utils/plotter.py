@@ -85,14 +85,14 @@ def plot_simple_reconstructions(model, val_dataset, filename, opt, n_imgs=20, sa
                                                          "body_label": body_label, "cloth_label": cloth_label, "densepose_label": densepose_label})
             agnostic = agnostic if opt.bpgm_id.find("old") >= 0 else None
             
-            out_model, parsing = model(image, label, "generate", None, agnostic=agnostic).detach().cpu()
+            out_model, parsing, C_t = model(image, label, "generate", None, agnostic=agnostic).detach().cpu()
             out.append(out_model)
             
             image["C_t"] = image["C_t_flip"]
             label["cloth_seg"] = model.module.edit_cloth_seg(image["C_t"], label["body_seg"], label["cloth_seg"])
             cloth_seg_swapped.append(label["cloth_seg"])
             
-            swap, parsing = model(image, label, "generate", None, agnostic=agnostic).detach().cpu()
+            swap, parsing, C_t = model(image, label, "generate", None, agnostic=agnostic).detach().cpu()
             swapped.append(swap)
         
         input_im = (input_im + 1) / 2
@@ -181,7 +181,7 @@ def evaluate(model, val_dataset, opt):
                 if opt.no_seg:
                     image["I_m"] = image["I"]
                 
-                pred_y, parsing = model(image, label, "generate", None, agnostic=agnostic)
+                pred_y, parsing, C_t = model(image, label, "generate", None, agnostic=agnostic)
                 pred_y = pred_y.detach()
                 
                 val_pred_y.append(pred_y.cpu())
