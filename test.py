@@ -177,6 +177,13 @@ if opt.phase == "test":
         # pred = cv2.resize(pred, (data_i['original_size'][1], data_i['original_size'][0]), interpolation=cv2.INTER_LINEAR)
         pred = cv2.resize(pred, opt.img_size[::-1], interpolation=cv2.INTER_AREA)
         
+        C_transform = (C_transform + 1) / 2
+        
+        C_transform = (C_transform * 255).astype(np.uint8)
+        C_transform = cv2.cvtColor(C_transform, cv2.COLOR_RGB2BGR)
+        # pred = cv2.resize(pred, (data_i['original_size'][1], data_i['original_size'][0]), interpolation=cv2.INTER_LINEAR)
+        C_transform = cv2.resize(C_transform, opt.img_size[::-1], interpolation=cv2.INTER_AREA)
+        
         if opt.dataset == "mpv":
             filename = data_i['name'][0].split("/")[-1].replace(".jpg", ".png")
         elif opt.dataset == "viton":
