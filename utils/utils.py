@@ -119,6 +119,7 @@ class losses_saver():
         for curve in self.losses:
             if np.isnan(self.losses[curve][0]):
                 continue
+            print(f"============== Current curve: {curve} ===============")
             plt.plot(n[1:], self.losses[curve][1:], label=curve)
         plt.ylabel('loss')
         plt.xlabel('epochs')
