@@ -177,6 +177,8 @@ if opt.phase == "test":
         # pred = cv2.resize(pred, (data_i['original_size'][1], data_i['original_size'][0]), interpolation=cv2.INTER_LINEAR)
         pred = cv2.resize(pred, opt.img_size[::-1], interpolation=cv2.INTER_AREA)
         
+        C_transform = C_transform.detach().cpu().squeeze().permute(1, 2, 0).numpy()
+        
         C_transform = (C_transform + 1) / 2
         
         C_transform = (C_transform * 255).astype(np.uint8)
