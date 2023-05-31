@@ -117,7 +117,7 @@ class losses_saver():
 
         fig, ax = plt.subplots(1)
         for curve in self.losses:
-            if np.isnan(self.losses[curve]):
+            if np.isnan(self.losses[curve][0]):
                 continue
             plt.plot(n[1:], self.losses[curve][1:], label=curve)
         plt.ylabel('loss')
