@@ -149,7 +149,7 @@ if __name__ == '__main__':
             if cur_iter % opt.freq_print == 0:
                 im_saver.visualize_batch(model, image, label, cur_iter, agnostic=agnostic, human_parsing=human_parsing)
                 timer(epoch, cur_iter)
-                visualizer_losses(cur_iter, losses_G_list + losses_D_list + losses_CD_list + losses_PD_list)
+                visualizer_losses(cur_iter, losses_G_list + losses_D_list + losses_CD_list + losses_PD_list + losses_HD_list)
 
             if cur_iter % opt.freq_save_ckpt == 0:
                 utils.save_networks(opt, cur_iter, model)
