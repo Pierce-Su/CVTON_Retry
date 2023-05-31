@@ -120,6 +120,7 @@ class losses_saver():
             if np.isnan(self.losses[curve][0]):
                 continue
             print(f"============== Current curve: {curve} ===============")
+            n = np.array(range(len(self.losses[curve]))) * self.opt.freq_smooth_loss
             plt.plot(n[1:], self.losses[curve][1:], label=curve)
         plt.ylabel('loss')
         plt.xlabel('epochs')
