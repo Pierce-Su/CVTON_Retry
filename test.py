@@ -195,7 +195,7 @@ if opt.phase == "test":
         im = tens_to_lab(label["densepose_seg"][0], opt.semantic_nc[2] + 1)
         cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename[:-4] + "_densepose.png"), im)
 
-        parsing_image = tens_to_lab(parsing, 17)
+        parsing_image = tens_to_lab(parsing[0], 17)
         cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename[:-4] + "_parsing.png"), parsing_image)
 
         cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename[:-4] + "_C_transform.png"),
