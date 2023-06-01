@@ -53,7 +53,7 @@ if __name__ == '__main__':
     if opt.add_pd_loss:
         optimizerPD = torch.optim.Adam(model.module.netPD.parameters(), lr=opt.lr_d, betas=(opt.beta1, opt.beta2))
     if opt.add_hd_loss:
-        optimizerHD = torch.optim.Adam(model.module.netHD.parameters(), lr=opt.lr_d, betas=(opt.beta1, opt.beta2))
+        optimizerHD = torch.optim.Adam(model.module.netHD.parameters(), lr=0.6 * opt.lr_d, betas=(opt.beta1, opt.beta2))
     scaler = GradScaler()
 
     #--- the training loop ---#
