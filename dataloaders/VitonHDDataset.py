@@ -307,7 +307,8 @@ class VitonHDDataset(Dataset):
             body_seg_transf[np.all(body_seg == color, axis=-1)] = i
 
             # additionally, get body segmentation centroids.
-            if self.phase == "train" and self.opt.add_pd_loss and (
+            # and self.opt.add_pd_loss
+            if self.phase == "train" and (
                     self.body_label_centroids[index] is None or len(self.body_label_centroids[index]) != len(
                 self.hand_indices)) and i in self.hand_indices:
                 if self.body_label_centroids[index] is None:
