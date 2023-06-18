@@ -123,11 +123,8 @@ def tens_to_lab(tens, num_cl):
 opt = config.read_arguments(train=False)
 
 #--- create dataloader to populate opt ---#
-#opt.phase = "test"
-opt.phase = "train"
-dataloaders.get_dataloaders(opt)
 opt.phase = "test"
-
+dataloaders.get_dataloaders(opt)
 
 assert opt.phase in {"val", "test"}
 
