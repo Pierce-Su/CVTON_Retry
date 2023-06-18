@@ -125,6 +125,7 @@ opt = config.read_arguments(train=False)
 #--- create dataloader to populate opt ---#
 opt.phase = "test"
 dataloaders.get_dataloaders(opt)
+im_saver = utils.image_saver(opt)
 
 assert opt.phase in {"val", "test"}
 
@@ -199,7 +200,9 @@ if opt.phase == "test":
             filename = data_i['name'][0].split("/")[-1]
         elif opt.dataset == "vitonHD":
             filename = data_i['name'][0].split("/")[-1]
-        cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename + "_" + str(i)), pred)
+            filename2 = data_i['name'][1].split("/")[-1]
+
+        cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename + "_on_" + filename2), pred)
         origin = tens_to_im(image["I"][0]) * 255
         origin = cv2.cvtColor(origin, cv2.COLOR_BGR2RGB)
         cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename[:-4] + "_origin.png"),
