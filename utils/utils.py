@@ -283,7 +283,7 @@ class image_saver():
             plt.imshow(im)
         fig.tight_layout()
         # plt.savefig(self.path + str(cur_iter) + "_" + name)
-        plt.savefig(os.path.join("results", "C-VTON-VITON-HD", "test" + "_images"), str(cur_iter) + "_" + name)
+        plt.savefig(os.path.join("results", "C-VTON-VITON-HD", "test" + "_images", str(cur_iter)) + "_" + name)
         plt.close()
 
 
