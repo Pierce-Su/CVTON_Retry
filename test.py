@@ -162,7 +162,7 @@ if opt.phase == "test":
 
     # using train dataset
     # os.makedirs(os.path.join("results", opt.name, opt.phase + "_images"), exist_ok=True)
-    os.makedirs(os.path.join("results", opt.name, "train" + "_images"), exist_ok=True)
+    os.makedirs(os.path.join("results", opt.name, opt.phase + "_images"), exist_ok=True)
 
     for i, data_i in enumerate(test_dataloader):
         print(i, "/", len(test_dataloader), end="\r")
