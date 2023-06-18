@@ -152,12 +152,18 @@ if opt.phase == "test":
     model = models.put_on_multi_gpus(opt, model)
     model.eval()
 
-    dataset = dataset_cl(opt, phase=opt.phase)
-    
+    # =================================
+    # using train dataset
+    # dataset = dataset_cl(opt, phase=opt.phase)
+    dataset = dataset_cl(opt, phase="train")
+    # =================================
+
     test_dataloader = DataLoader(dataset, batch_size=1, shuffle=False, drop_last=False)
-    
-    os.makedirs(os.path.join("results", opt.name, opt.phase + "_images"), exist_ok=True)
-    
+
+    # using train dataset
+    # os.makedirs(os.path.join("results", opt.name, opt.phase + "_images"), exist_ok=True)
+    os.makedirs(os.path.join("results", opt.name, "train" + "_images"), exist_ok=True)
+
     for i, data_i in enumerate(test_dataloader):
         print(i, "/", len(test_dataloader), end="\r")
         image, label, human_parsing = models.preprocess_input(opt, data_i)
