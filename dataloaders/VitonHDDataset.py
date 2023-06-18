@@ -206,7 +206,7 @@ class VitonHDDataset(Dataset):
         ])
 
 
-        if phase in {"train", "train_whole"} and self.opt.add_pd_loss:
+        if phase in {"train", "train_whole"} # and self.opt.add_pd_loss:
             self.hand_indices = [3, 4, 5]
             self.body_label_centroids = [None] * len(self.filepath_df)
         else:
