@@ -136,7 +136,7 @@ elif opt.dataset == "vitonHD":
     dataset_cl = VitonHDDataset
 else:
     raise NotImplementedError
-
+"""
 if (opt.phase == "val" or opt.phase == "test"):
     model = models.OASIS_model(opt)
     model = models.put_on_multi_gpus(opt, model)
@@ -146,7 +146,7 @@ if (opt.phase == "val" or opt.phase == "test"):
 
     dataset = dataset_cl(opt, phase=opt.phase)
     evaluate(model, dataset, opt)
-
+"""
 if opt.phase == "test":
     model = models.OASIS_model(opt)
     model = models.put_on_multi_gpus(opt, model)
