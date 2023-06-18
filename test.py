@@ -193,7 +193,7 @@ if opt.phase == "test":
             filename = data_i['name'][0].split("/")[-1]
         elif opt.dataset == "vitonHD":
             filename = data_i['name'][0].split("/")[-1]
-        cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename + "_" + i), pred)
+        cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename + "_" + str(i)), pred)
         origin = tens_to_im(image["I"][0]) * 255
         origin = cv2.cvtColor(origin, cv2.COLOR_BGR2RGB)
         cv2.imwrite(os.path.join("results", opt.name, opt.phase + "_images", filename[:-4] + "_origin.png"),
